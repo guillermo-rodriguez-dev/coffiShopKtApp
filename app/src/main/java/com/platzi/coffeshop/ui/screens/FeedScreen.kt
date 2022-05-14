@@ -13,9 +13,18 @@ import com.platzi.coffeshop.ui.components.Title
 import com.platzi.coffeshop.ui.theme.CoffeShopTheme
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.ui.Modifier
+import com.platzi.coffeshop.ui.components.CountryISO
+import com.platzi.coffeshop.ui.components.ProductCard
+import androidx.compose.foundation.lazy.items
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun FeedScreen(): Unit {
+fun FeedScreen( navController: NavController): Unit {
+
+    val list = listOf<CountryISO>(
+        CountryISO.COL, CountryISO.BRA, CountryISO.NIC, CountryISO.CRI
+    )
     CoffeShopTheme() {
         androidx.compose.material.Surface(color=MaterialTheme.colors.background) {
             LazyColumn(verticalArrangement = Arrangement.SpaceBetween){
@@ -26,6 +35,21 @@ fun FeedScreen(): Unit {
                         Title(title = "Prueba")
                         BodyText(body = "Body")
                     }
+                }
+                items(list){
+                    country -> ProductCard(
+                    name = "cafe",
+                    sumery = "cafe de prueba",
+                    price = 35.0,
+                    currency = "USD",
+                    countryISO = country
+                ){
+                        navController.navigate("item/${country.iso}"){
+
+                            launchSingleTop= true
+                        }
+
+                }
                 }
             }
         }
@@ -39,5 +63,6 @@ fun FeedScreen(): Unit {
 
 @Composable
 fun FeedScrrenPreviw(){
-    FeedScreen()
+    val navController = rememberNavController( )
+    FeedScreen(navController)
 }

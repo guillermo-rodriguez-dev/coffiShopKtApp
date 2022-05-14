@@ -22,29 +22,59 @@ import com.platzi.coffeshop.ui.theme.CoffeShopTheme
 import com.platzi.coffeshop.ui.theme.PlatziBlue
 import com.platzi.coffeshop.ui.theme.PlatziGreen
 
-enum class CountryISO(
-    val image: Int,
-    val flag: Int,
-    val surfaceColor: Color,
-) {
-    COL(R.drawable.co, R.drawable.flagco, PlatziBlue),
-    BRA(R.drawable.br, R.drawable.flagbr, PlatziGreen),
-    CRI(R.drawable.ri, R.drawable.flagri, PlatziGreen),
-    NIC(R.drawable.ni, R.drawable.flagni, PlatziBlue)
+
+enum class  CountryISO(val iso: String) {
+    COL("COL"),
+    BRA("BRA"),
+    CRI("CRI"),
+    NIC("NIC");
+
+    fun getBackgroundImage(): Int {
+        when(this) {
+            COL -> return R.drawable.co
+            BRA -> return R.drawable.br
+            CRI -> return R.drawable.ri
+            NIC -> return R.drawable.ni
+        }
+    }
+
+    fun getCountryFlag(): Int {
+        when(this) {
+            COL -> return R.drawable.flagco
+            BRA -> return R.drawable.flagbr
+            CRI -> return R.drawable.flagri
+            NIC -> return R.drawable.flagni
+        }
+    }
+
+    fun getSurfaceColor(): Color {
+        when(this) {
+            COL, NIC -> return PlatziBlue
+            BRA, CRI -> return PlatziGreen
+        }
+    }
 }
 
+typealias SelectionAction =()->Unit
 @Composable
-fun ProductCard(name: String, sumery: String, price: Double, currency: String, countryISO: CountryISO) {
+fun ProductCard(
+    name: String,
+    sumery: String,
+    price: Double,
+    currency: String,
+    countryISO: CountryISO,
+    selected : ()->Unit
+) {
 
     Card(modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp)
-        .clickable { }
+        .clickable { selected()}
         .size(480.dp), elevation = 10.dp, shape = MaterialTheme.shapes.small) {
-        Image(painter = painterResource(id = countryISO.flag), contentDescription = null)
-        androidx.compose.material.Surface(
+        Image(painter = painterResource(countryISO.getBackgroundImage()), contentDescription = null)
+        Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = countryISO.surfaceColor
+            color = countryISO.getSurfaceColor().copy(alpha = 0.2f)
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -61,7 +91,7 @@ fun ProductCard(name: String, sumery: String, price: Double, currency: String, c
                 ) {
                     Row() {
                         Image(
-                            painter = painterResource(id = countryISO.image),
+                            painter = painterResource(id = countryISO.getCountryFlag()),
                             contentDescription = null,
                             modifier = Modifier.size(32.dp, 32.dp)
                         )
@@ -86,7 +116,14 @@ fun ProductCard(name: String, sumery: String, price: Double, currency: String, c
 @Composable
 fun ProductCardPreview() {
     CoffeShopTheme() {
-        ProductCard(name = "Cafe Colombia", sumery = "Cafe de origen de las montañas", price = 35.0, currency = "dolares" , CountryISO.BRA)
+        ProductCard(
+            name = "Cafe Colombia",
+            sumery = "Cafe de origen de las montañas",
+            price = 35.0,
+            currency = "dolares",
+            CountryISO.BRA,
+
+        ){}
     }
 
 }
